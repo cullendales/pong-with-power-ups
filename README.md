@@ -1,6 +1,6 @@
 # pong-with-power-ups
 ## About
-Takes the classic game Pong and adds a twist - power-ups! Enjoy Pong like never before.
+Takes the classic game Pong and adds a twist - power-ups! Enjoy Pong like never before. This game was my first game written in Lua and I wrote it on a plane without any Lua documentation, learning the language's syntax through error messages.
 
 ## Getting Started
 ### Prerequisites
