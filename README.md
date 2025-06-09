@@ -1,2 +1,2 @@
 # pong-with-power-ups
-The class Pong game with a new twist.
+The classic Pong game with a new twist.
