@@ -28,5 +28,5 @@ You can also try the alpha version of this game available here:
 - [ ] Update personal website edition
 
 ## Notes
-Power-ups are still in development and under testing. This repo will be updated with the full game shortly. For now enjoy the classic game of Pong.
+Power-ups and a more realistic physics system are still in development and under testing. This repo will be updated with the full game shortly. For now enjoy the classic game of Pong.
 
