@@ -23,7 +23,9 @@ You can also try the alpha version of this game available here:
 ## Roadmap
 - [x] Finish classic game of Pong
 - [x] Polish game physics and speed of ball
+- [x] Add game to personal website in JavaScript
 - [ ] Add in Various Power-Ups
+- [ ] Update personal website edition
 
 ## Notes
 Power-ups are still in development and under testing. This repo will be updated with the full game shortly. For now enjoy the classic game of Pong.
