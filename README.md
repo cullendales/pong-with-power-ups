@@ -1,8 +1,8 @@
 # pong-with-power-ups
 ## About
-Takes the classic game Pong and adds a twist - power-ups! Enjoy Pong like never before. This game was my first game written in Lua and I wrote it on a plane without any Lua documentation, learning the language's syntax through error messages. The game was written in Lua and translated to JavaScript for online compatability.
+Takes the classic game Pong and adds a twist - power-ups! Enjoy Pong like never before. This game was my first game written in Lua and I wrote it on a plane without any Lua documentation, learning the language's syntax through error messages. The game was also translated to JavaScript for online compatability.
 
-You can also try the JavaScript alpha version of this game available here:
+You can try the JavaScript alpha version of this game available here:
 
 [cullendales.com/pong](https://cullendales.com/pong/)
 
