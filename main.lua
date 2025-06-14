@@ -3,8 +3,8 @@ ball.x = 333
 ball.y = 260
 ball.height = 20
 ball.width = 20
-ball.x_vel = 3
-ball.y_vel = 1
+ball.x_vel = 300
+ball.y_vel = 100
 count = 0
 best_count = 0
 current = 0
@@ -37,9 +37,9 @@ function love.load()
 end
 
 function love.update(dt)		
-	ball.x = ball.x + ball.x_vel
-	ball.y = ball.y + ball.y_vel
-
+	ball.x = ball.x + ball.x_vel * dt
+	ball.y = ball.y + ball.y_vel * dt
+	
 	if ball.x > 780 then
 		plyr1_score = plyr1_score + 1
 		ball:reset()
@@ -47,23 +47,20 @@ function love.update(dt)
 		plyr2_score = plyr2_score + 1
 		ball:reset()
 	end
-
+	
 	if love.keyboard.isDown("down") then
-		right.y = right.y + 300 * dt
+		right.y = right.y + 350 * dt
 	end
-
 	if love.keyboard.isDown("up") then
-		right.y = right.y - 300 * dt
+		right.y = right.y - 350 * dt
 	end
-
 	if love.keyboard.isDown("s") then
-		left.y = left.y + 300 * dt
+		left.y = left.y + 350 * dt
 	end
-
 	if love.keyboard.isDown("w") then
-		left.y = left.y - 300 * dt
+		left.y = left.y - 350 * dt
 	end
-
+	
 	if plyr1_wins or plyr2_wins then
 		if love.keyboard.isDown("y") then
 			plyr1_score = 0
@@ -71,67 +68,80 @@ function love.update(dt)
 			plyr1_wins = false
 			plyr2_wins = false
 			overtime = false
-			ball.x_vel = 3
-			ball.y_vel = 1
+			ball.x_vel = 400
+			ball.y_vel = 100
+			powerup.right_timer = 0
+			powerup.left_timer = 0
+			right.height = right.original_height
+			right.width = right.original_width
+			left.height = left.original_height
+			left.width = left.original_width
 		end
 	end
 	
 	if right.y < 0 then
 		right.y = 0
 	end
-
-	if right.y > 517 then
-		right.y = 517
+	if right.y > 600 - right.height then
+		right.y = 600 - right.height
 	end
-
 	if left.y < 0 then
 		left.y = 0
 	end
-	
-	if left.y > 517 then
-		left.y = 517
+	if left.y > 600 - left.height then
+		left.y = 600 - left.height
 	end
-
+	
 	if ball.x > right.x - ball.width and ball.y <= right.y + right.height and ball.y >= right.y - ball.height then
-		ball.x_vel = -1 * (ball.x_vel + 0.5)
+		local hit_pos = (ball.y + ball.height/2 - right.y) / right.height
+		hit_pos = math.max(0, math.min(1, hit_pos)) 
+		local max_angle = math.pi / 3
+		local angle = (hit_pos - 0.5) * 2 * max_angle		
+		local speed = math.sqrt(ball.x_vel^2 + ball.y_vel^2) + 20
+		ball.x_vel = -math.abs(math.cos(angle) * speed) 
+		ball.y_vel = math.sin(angle) * speed		
 		ball.x = ball.x - 10
 		count = count + 1
 	end
-
-	if ball.x < left.x + ball.width + 2.5 and ball.y <= left.y + left.height and ball.y >= left.y - ball.height then
-		ball.x_vel = -1 * (ball.x_vel - 0.5)
+	
+	if ball.x < left.x + left.width + 2.5 and ball.y <= left.y + left.height and ball.y >= left.y - ball.height then
+		local hit_pos = (ball.y + ball.height/2 - left.y) / left.height
+		hit_pos = math.max(0, math.min(1, hit_pos)) 
+		local max_angle = math.pi / 3 
+		local angle = (hit_pos - 0.5) * 2 * max_angle		
+		local speed = math.sqrt(ball.x_vel^2 + ball.y_vel^2) + 20 
+		ball.x_vel = math.abs(math.cos(angle) * speed) 
+		ball.y_vel = math.sin(angle) * speed		
 		ball.x = ball.x + 10
 		count = count + 1
 	end
-
-	if ball.y == 0 then
-		ball.y_vel = 1
+	
+	if ball.y <= 0 then
+		ball.y_vel = math.abs(ball.y_vel) + love.math.random(-0.1, 0.1)
+		ball.y = 1
 	end
-
-	if ball.y == 580 then
-		ball.y_vel = -1
+	if ball.y >= 580 then
+		ball.y_vel = -math.abs(ball.y_vel) + love.math.random(-0.1, 0.1)
+		ball.y = 579
 	end
-
+	
 	if count > best_count then
 		best_count = count
 	end
-
+	
 	if plyr1_score >= 5 and plyr2_score >= 4 or plyr2_score >= 5 and plyr1_score >= 4 then
 		overtime = true
 	end
-
 	if plyr1_score >= 5 and plyr1_score > plyr2_score + 1 then
 		plyr1_wins = true
 		ball.x_vel = 0
 		ball.y_vel = 0
 	end
-
 	if plyr2_score >= 5 and plyr2_score > plyr1_score + 1 then
 		plyr2_wins = true
 		ball.x_vel = 0
 		ball.y_vel = 0
 	end
-
 end
 
 function ball:reset()
@@ -144,11 +154,11 @@ function ball:reset()
 	ball.x = 333
 	ball.y = 260
 	if plyr1_score > plyr2_score then
-		ball.x_vel = 3
-		ball.y_vel = 1
+		ball.x_vel = 300
+		ball.y_vel = 100
 	else
-		ball.x_vel = -3
-		ball.y_vel = 1
+		ball.x_vel = -300
+		ball.y_vel = 100
 	end
 end
 
