@@ -6,6 +6,10 @@ You can try the JavaScript alpha version of this game available here:
 
 [cullendales.com/pong-with-power-ups](https://cullendales.com/pong-with-power-ups/)
 
+This online version is a two player game. 
+Player 1 controls: WASD
+Player 2 controls: arrow keys
+
 ## Getting Started
 ### Prerequisites
 1. Love2D application
