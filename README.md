@@ -18,7 +18,7 @@ You can try the JavaScript alpha version of this game available here:
 ```
 
 ## Usage
-1. Drag main.lua into your love2D application to launch the game
+1. Drag the Lua folder containing main.lua into your love2D application to launch the game
 
 ## Roadmap
 - [x] Finish classic game of Pong

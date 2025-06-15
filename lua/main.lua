@@ -68,14 +68,8 @@ function love.update(dt)
 			plyr1_wins = false
 			plyr2_wins = false
 			overtime = false
-			ball.x_vel = 400
+			ball.x_vel = 300
 			ball.y_vel = 100
-			powerup.right_timer = 0
-			powerup.left_timer = 0
-			right.height = right.original_height
-			right.width = right.original_width
-			left.height = left.original_height
-			left.width = left.original_width
 		end
 	end
 	
