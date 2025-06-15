@@ -3,18 +3,24 @@ ball.x = 333
 ball.y = 260
 ball.height = 20
 ball.width = 20
-ball.x_vel = 300
+ball.x_vel = 250
 ball.y_vel = 100
 count = 0
 best_count = 0
 current = 0
+power_up_spawn = 0
+power_up_interval = 15
+
 
 function love.load()
+	game_state = "start"
+	
 	left = {}
 	left.x = 0
 	left.y = 0
 	left.width = 25
 	left.height = 85
+	ball.start_speed = 250
 	
 	right = {}
 	right.x = 775
@@ -25,6 +31,14 @@ function love.load()
 	powerup = {}
 	powerup.right = "none"
 	powerup.left = "none"
+	powerup.right_timer = 0
+	powerup.left_timer = 0
+	powerup.duration = 12
+	powerup.ball_effect_player = "none"
+	powerups = {}
+	-- all future power ups
+	--power_types = {"bigger", "smaller", "fast_ball", "curve_ball", "invisible", "fast_movement", "glue", "double_ball", "boomerang", "big_ball"}
+	power_types = {"bigger", "smaller", "big_ball"}
 
 	plyr1_score = 0
 	plyr2_score = 0
@@ -36,7 +50,140 @@ function love.load()
 
 end
 
-function love.update(dt)		
+function spawn_power_up()
+	local powerup_item = {}
+	powerup_item.x = love.math.random(100, 700)
+	powerup_item.y = love.math.random(50, 550) 
+	powerup_item.width = 45
+	powerup_item.height = 45
+	powerup_item.type = power_types[love.math.random(1, #power_types)]
+	powerup_item.lifetime = 12 
+	
+	table.insert(powerups, powerup_item)
+end
+
+function gain_power_up()
+	for i = #powerups, 1, -1 do
+		local p = powerups[i]
+		if ball.x < p.x + p.width and ball.x + ball.width > p.x and ball.y < p.y + p.height and ball.y + ball.height > p.y then		
+			if ball.x_vel > 0 then
+				apply_power_up("left", p.type)
+			else
+				apply_power_up("right", p.type)
+			end
+			table.remove(powerups, i)
+		end
+	end
+end
+
+function apply_power_up(player, type)
+	-- if player == "right" then
+	-- 	powerup.right = type
+	-- 	powerup.right_timer = powerup.duration
+	-- else
+	-- 	powerup.left = type
+	-- 	powerup.left_timer = powerup.duration
+	-- end
+
+	if type == "bigger" then
+		if player == "left" then
+			left.height = left.height * 1.5
+			powerup.left_timer = powerup.duration
+        	powerup.left = "Mega Paddle"
+		else
+			right.height = right.height * 1.5
+			powerup.right_timer = powerup.duration
+        	powerup.right = "Mega Paddle"
+		end
+	elseif type == "smaller" then
+		if player == "left" then
+			right.height = right.height * 0.6
+			powerup.left_timer = powerup.duration
+        	powerup.left = "Shrunk"
+		else
+			left.height = left.height * 0.6
+			powerup.right_timer = powerup.duration
+        	powerup.right = "Shrunk"
+		end
+	elseif type == "big_ball" then
+		ball.height = 80
+		ball.width = 80
+		powerup.ball_effect_player = player
+		if player == "left" then
+			powerup.left_timer = powerup.duration
+			powerup.left = "Super Ball"
+    	else
+			powerup.right_timer = powerup.duration
+			powerup.right = "Super Ball"
+    	end
+	end
+end
+
+-- power up ideas
+	-- elseif type == "fast_ball" then -- maybe make for only collisions
+	-- 	ball.x_vel = ball.x_vel * 2
+	-- 	ball.y_vel = ball.y_vel * 2
+	-- elseif type == "glue" then
+	-- elseif type == "curve_ball" then
+	-- elseif type == "invisible" then
+	-- elseif type == "fast_movement" then
+	-- elseif type == "double_ball" then
+	-- elseif type == "boomerang" then
+
+
+function ability_update(dt)
+	if powerup.right_timer > 0 then
+		powerup.right_timer = powerup.right_timer - dt
+		if powerup.right_timer <= 0 then
+			if powerup.right == "Mega Paddle" then
+				right.height = 85
+			elseif powerup.right == "Shrunk" then
+				left.height = 85 
+			end
+			if powerup.ball_effect_player == "right" then
+				ball.height = 20
+				ball.width = 20
+				powerup.ball_effect_player = "none"
+			end
+			powerup.right = "none"
+		end
+	end
+
+	if powerup.left_timer > 0 then
+		powerup.left_timer = powerup.left_timer - dt
+		if powerup.left_timer <= 0 then
+			if powerup.left == "Mega Paddle" then
+				left.height = 85  
+			elseif powerup.left == "Shrunk" then
+				right.height = 85 
+			end
+			if powerup.ball_effect_player == "left" then
+				ball.height = 20
+				ball.width = 20
+				powerup.ball_effect_player = "none"
+			end
+			powerup.left = "none"
+		end
+	end
+
+	for i = #powerups, 1, -1 do
+		powerups[i].lifetime = powerups[i].lifetime - dt
+		if powerups[i].lifetime <= 0 then
+			table.remove(powerups, i)
+		end
+	end
+
+	power_up_spawn = power_up_spawn + dt
+	if power_up_spawn >= power_up_interval then
+		spawn_power_up()
+		power_up_spawn = 0
+	end
+end
+
+
+function love.update(dt)
+	ability_update(dt)
+	gain_power_up()		
 	ball.x = ball.x + ball.x_vel * dt
 	ball.y = ball.y + ball.y_vel * dt
 	
@@ -68,8 +215,19 @@ function love.update(dt)
 			plyr1_wins = false
 			plyr2_wins = false
 			overtime = false
-			ball.x_vel = 300
+			ball.x_vel = 250
 			ball.y_vel = 100
+			powerup.right = "none"
+			powerup.left = "none"
+			powerup.right_timer = 0
+			powerup.left_timer = 0
+			right.height = 85
+			right.width = 25
+			left.height = 85
+			left.width = 25
+			ball.height = 20
+			ball.width = 20
+			powerups = {}
 		end
 	end
 	
@@ -114,9 +272,9 @@ function love.update(dt)
 		ball.y_vel = math.abs(ball.y_vel) + love.math.random(-0.1, 0.1)
 		ball.y = 1
 	end
-	if ball.y >= 580 then
+	if ball.y + ball.height >= 600 then
 		ball.y_vel = -math.abs(ball.y_vel) + love.math.random(-0.1, 0.1)
-		ball.y = 579
+		ball.y = 600 - ball.height
 	end
 	
 	if count > best_count then
@@ -138,6 +296,29 @@ function love.update(dt)
 	end
 end
 
+function get_power_up_colour(type)
+	if type == "bigger" then
+		return {0, 1, 0} 
+	elseif type == "smaller" then
+		return {1, 0, 0}
+	else
+		return {1, 1, 1} 
+	end
+end
+
+function reset_powerups()
+	left.height = 85
+	right.height = 85
+	ball.height = 20
+	ball.width = 20
+	powerup.right = "none"
+	powerup.left = "none"
+	powerup.right_timer = 0
+	powerup.left_timer = 0
+	powerup.ball_effect_player = "none"
+	powerups = {}
+end
+
 function ball:reset()
 	if best_count > current then
 		current = best_count
@@ -147,11 +328,15 @@ function ball:reset()
 	count = 0
 	ball.x = 333
 	ball.y = 260
+	ball.height = 20
+	ball.width = 20	
+	reset_powerups()
+
 	if plyr1_score > plyr2_score then
-		ball.x_vel = 300
+		ball.x_vel = 250
 		ball.y_vel = 100
 	else
-		ball.x_vel = -300
+		ball.x_vel = -250
 		ball.y_vel = 100
 	end
 end
@@ -161,7 +346,12 @@ function love.draw()
 	love.graphics.rectangle("line", right.x, right.y, right.width, right.height)
 	love.graphics.rectangle("fill", ball.x, ball.y, ball.width, ball.height)
 	love.graphics.print(plyr1_score .. " - " .. plyr2_score, 385, 10)
-	
+
+	for _, p in ipairs(powerups) do
+		love.graphics.setColor(get_power_up_colour(p.type))
+		love.graphics.rectangle("fill", p.x, p.y, p.width, p.height)
+		love.graphics.setColor(1, 1, 1)
+	end
 	if plyr1_score > plyr2_score then
 		love.graphics.print("KING", 30, 10)
 	elseif plyr2_score > plyr1_score then
@@ -180,10 +370,10 @@ function love.draw()
 
 	if plyr1_wins then
 		love.graphics.print("PLAYER 1 WINS!", 345, 205)
-		love.graphics.print("Play Again? [y/n]", 345, 225)
+		love.graphics.print("Play Again? [y]", 345, 225)
 	elseif plyr2_wins then
 		love.graphics.print("PLAYER 2 WINS!", 345, 205)
-		love.graphics.print("Play Again? [y/n]", 345, 225)
+		love.graphics.print("Play Again? [y]", 345, 225)
 	end
 end
 
