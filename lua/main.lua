@@ -77,14 +77,6 @@ function gain_power_up()
 end
 
 function apply_power_up(player, type)
-	-- if player == "right" then
-	-- 	powerup.right = type
-	-- 	powerup.right_timer = powerup.duration
-	-- else
-	-- 	powerup.left = type
-	-- 	powerup.left_timer = powerup.duration
-	-- end
-
 	if type == "bigger" then
 		if player == "left" then
 			left.height = left.height * 1.5
