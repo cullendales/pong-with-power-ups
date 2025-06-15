@@ -4,7 +4,7 @@ Takes the classic game Pong and adds a twist - power-ups! Enjoy Pong like never 
 
 You can try the JavaScript alpha version of this game available here:
 
-[cullendales.com/pong](https://cullendales.com/pong-with-power-ups/)
+[cullendales.com/pong-with-power-ups](https://cullendales.com/pong-with-power-ups/)
 
 ## Getting Started
 ### Prerequisites
