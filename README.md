@@ -21,7 +21,7 @@ Player 2 controls: arrow keys
 ```
 
 ## Usage
-1. Drag the Lua either the multiplayer or ai_version folder from Lua containing main.lua into your love2D application to launch the game
+1. If using Love2D, drag either the multiplayer or ai_version folder from Lua containing main.lua into your love2D application to launch the game
 
 ## Roadmap
 - [x] Finish classic game of Pong
